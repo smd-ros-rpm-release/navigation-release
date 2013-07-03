@@ -1,0 +1,12 @@
+Source: ros-hydro-nav-core
+Section: misc
+Priority: extra
+Maintainer: "contradict <contradict@gmail.com>"
+Build-Depends: debhelper (>= 7.0.50~), ros-hydro-catkin, ros-hydro-costmap-2d, ros-hydro-geometry-msgs, ros-hydro-std-msgs, ros-hydro-tf
+Homepage: http://ros.org/wiki/nav_core
+Standards-Version: 3.9.2
+
+Package: ros-hydro-nav-core
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-hydro-costmap-2d, ros-hydro-geometry-msgs, ros-hydro-std-msgs, ros-hydro-tf
+Description: This package provides common interfaces for navigation specific robot actions. Currently, this package provides the BaseGlobalPlanner, BaseLocalPlanner, and RecoveryBehavior interfaces, which can be used to build actions that can easily swap their planner, local controller, or recovery behavior for new versions adhering to the same interface.
