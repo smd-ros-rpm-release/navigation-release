@@ -1,0 +1,12 @@
+Source: ros-hydro-move-slow-and-clear
+Section: misc
+Priority: extra
+Maintainer: "contradict <contradict@gmail.com>"
+Build-Depends: debhelper (>= 7.0.50~), ros-hydro-catkin, ros-hydro-costmap-2d, ros-hydro-geometry-msgs, ros-hydro-nav-core, ros-hydro-pluginlib, ros-hydro-roscpp
+Homepage: http://ros.org/wiki/move_slow_and_clear
+Standards-Version: 3.9.2
+
+Package: ros-hydro-move-slow-and-clear
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-hydro-costmap-2d, ros-hydro-geometry-msgs, ros-hydro-nav-core, ros-hydro-pluginlib, ros-hydro-roscpp
+Description: move_slow_and_clear
