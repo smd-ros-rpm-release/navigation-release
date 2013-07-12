@@ -3,6 +3,7 @@ project(fake_localization)
 
 find_package(catkin REQUIRED
         COMPONENTS
+            angles
             roscpp
             rosconsole
             nav_msgs
@@ -19,6 +20,8 @@ catkin_package(
         roscpp
         rospy
 )
+
+include_directories(${caktin_INCLUDE_DIRS} ${Boost_INCLUDE_DIRS})
 
 add_executable(fake_localization fake_localization.cpp)
 target_link_libraries(fake_localization
