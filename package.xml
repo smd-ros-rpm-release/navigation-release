@@ -1,13 +1,14 @@
 <package>
     <name>nav_core</name>
-    <version>1.11.0</version>
+    <version>1.11.1</version>
     <description>
 
         This package provides common interfaces for navigation specific robot actions. Currently, this package provides the BaseGlobalPlanner, BaseLocalPlanner, and RecoveryBehavior interfaces, which can be used to build actions that can easily swap their planner, local controller, or recovery behavior for new versions adhering to the same interface.
 
     </description>
     <author>Eitan Marder-Eppstein</author>
-    <maintainer email="contradict@gmail.com">contradict</maintainer>
+    <author>contradict@gmail.com</author>
+    <maintainer email="hersh@willowgarage.com">Dave Hershberger</maintainer>
     <license>BSD</license>
     <url>http://ros.org/wiki/nav_core</url>
 
