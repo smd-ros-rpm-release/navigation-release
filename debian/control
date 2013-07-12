@@ -1,0 +1,12 @@
+Source: ros-hydro-carrot-planner
+Section: misc
+Priority: extra
+Maintainer: "Dave Hershberger <hersh@willowgarage.com>"
+Build-Depends: debhelper (>= 7.0.50~), libeigen3-dev, ros-hydro-base-local-planner, ros-hydro-catkin, ros-hydro-costmap-2d, ros-hydro-nav-core, ros-hydro-pluginlib, ros-hydro-roscpp, ros-hydro-tf
+Homepage: http://pr.willowgarage.com/wiki/carrot_planner
+Standards-Version: 3.9.2
+
+Package: ros-hydro-carrot-planner
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libeigen3-dev, ros-hydro-base-local-planner, ros-hydro-costmap-2d, ros-hydro-nav-core, ros-hydro-pluginlib, ros-hydro-roscpp, ros-hydro-tf
+Description: This planner attempts to find a legal place to put a carrot for the robot to follow. It does this by moving back along the vector between the robot and the goal point.
