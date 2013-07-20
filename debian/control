@@ -1,0 +1,12 @@
+Source: ros-hydro-clear-costmap-recovery
+Section: misc
+Priority: extra
+Maintainer: "Dave Hershberger <hersh@willowgarage.com>"
+Build-Depends: debhelper (>= 7.0.50~), libeigen3-dev, ros-hydro-catkin, ros-hydro-costmap-2d, ros-hydro-nav-core, ros-hydro-pluginlib, ros-hydro-roscpp, ros-hydro-tf
+Homepage: http://ros.org/wiki/clear_costmap_recovery
+Standards-Version: 3.9.2
+
+Package: ros-hydro-clear-costmap-recovery
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libeigen3-dev, ros-hydro-costmap-2d, ros-hydro-nav-core, ros-hydro-pluginlib, ros-hydro-roscpp, ros-hydro-tf
+Description: This package provides a recovery behavior for the navigation stack that attempts to clear space by reverting the costmaps used by the navigation stack to the static map outside of a given area.
