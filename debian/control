@@ -1,0 +1,12 @@
+Source: ros-hydro-dwa-local-planner
+Section: misc
+Priority: extra
+Maintainer: Dave Hershberger <hersh@willowgarage.com>
+Build-Depends: debhelper (>= 7.0.50~), libeigen3-dev, ros-hydro-base-local-planner, ros-hydro-catkin, ros-hydro-costmap-2d, ros-hydro-dynamic-reconfigure, ros-hydro-nav-core, ros-hydro-nav-msgs, ros-hydro-pcl-conversions, ros-hydro-pluginlib, ros-hydro-roscpp, ros-hydro-tf
+Homepage: http://ros.org/wiki/dwa_local_planner
+Standards-Version: 3.9.2
+
+Package: ros-hydro-dwa-local-planner
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libeigen3-dev, ros-hydro-base-local-planner, ros-hydro-costmap-2d, ros-hydro-dynamic-reconfigure, ros-hydro-nav-core, ros-hydro-nav-msgs, ros-hydro-pluginlib, ros-hydro-roscpp, ros-hydro-tf
+Description: This package provides an implementation of the Dynamic Window Approach to local robot navigation on a plane. Given a global plan to follow and a costmap, the local planner produces velocity commands to send to a mobile base. This package supports any robot who's footprint can be represented as a convex polygon or cicrle, and exposes its configuration as ROS parameters that can be set in a launch file. The parameters for this planner are also dynamically reconfigurable. This package's ROS wrapper adheres to the BaseLocalPlanner interface specified in the nav_core package.
