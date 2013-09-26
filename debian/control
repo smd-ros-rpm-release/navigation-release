@@ -1,0 +1,12 @@
+Source: ros-hydro-move-base-msgs
+Section: misc
+Priority: extra
+Maintainer: Dave Hershberger <hersh@willowgarage.com>
+Build-Depends: debhelper (>= 7.0.50~), ros-hydro-actionlib-msgs, ros-hydro-catkin, ros-hydro-geometry-msgs, ros-hydro-message-generation, ros-hydro-roscpp
+Homepage: http://pr.willowgarage.com/wiki/move_base_msgs
+Standards-Version: 3.9.2
+
+Package: ros-hydro-move-base-msgs
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-hydro-actionlib-msgs, ros-hydro-geometry-msgs, ros-hydro-message-runtime, ros-hydro-roscpp
+Description: Holds the action description and relevant messages for the move_base package
