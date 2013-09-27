@@ -72,6 +72,8 @@ public:
 
   virtual void activate();
   virtual void deactivate();
+  virtual void reset();
+
   bool isDiscretized()
   {
     return true;
@@ -117,6 +119,8 @@ public:
 protected:
   void initMaps();
 
+  virtual void setupDynamicReconfigure(ros::NodeHandle& nh);
+
   /**
    * @brief  Get the observations used to mark space
    * @param marking_observations A reference to a vector that will be populated with the observations
@@ -137,6 +141,9 @@ protected:
    */
   virtual void raytraceFreespace(const costmap_2d::Observation& clearing_observation, double* min_x, double* min_y,
                                  double* max_x, double* max_y);
+
+  void updateRaytraceBounds(double ox, double oy, double wx, double wy, double range, double* min_x, double* min_y,
+			    double* max_x, double* max_y);
 
   /** @brief Overridden from superclass Layer to pass new footprint into footprint_layer_. */
   virtual void onFootprintChanged();
