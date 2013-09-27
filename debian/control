@@ -1,0 +1,12 @@
+Source: ros-hydro-navfn
+Section: misc
+Priority: extra
+Maintainer: Dave Hershberger <hersh@willowgarage.com>
+Build-Depends: debhelper (>= 7.0.50~), libnetpbm10-dev, ros-hydro-catkin, ros-hydro-costmap-2d, ros-hydro-geometry-msgs, ros-hydro-nav-core, ros-hydro-nav-msgs, ros-hydro-pcl-conversions, ros-hydro-pcl-ros, ros-hydro-pluginlib, ros-hydro-rosconsole, ros-hydro-roscpp, ros-hydro-tf, ros-hydro-visualization-msgs
+Homepage: http://wiki.ros.org/navfn
+Standards-Version: 3.9.2
+
+Package: ros-hydro-navfn
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-hydro-costmap-2d, ros-hydro-geometry-msgs, ros-hydro-nav-core, ros-hydro-nav-msgs, ros-hydro-pcl-conversions, ros-hydro-pcl-ros, ros-hydro-pluginlib, ros-hydro-rosconsole, ros-hydro-roscpp, ros-hydro-tf, ros-hydro-visualization-msgs
+Description: navfn provides a fast interpolated navigation function that can be used to create plans for a mobile base. The planner assumes a circular robot and operates on a costmap to find a minimum cost plan from a start point to an end point in a grid. The navigation function is computed with Dijkstra's algorithm, but support for an A* heuristic may also be added in the near future. navfn also provides a ROS wrapper for the navfn planner that adheres to the nav_core::BaseGlobalPlanner interface specified in nav_core.
