@@ -1,6 +1,6 @@
 <package>
     <name>move_slow_and_clear</name>
-    <version>1.11.3</version>
+    <version>1.11.4</version>
     <description>
 
         move_slow_and_clear
@@ -10,7 +10,7 @@
     <author>contradict@gmail.com</author>
     <maintainer email="hersh@willowgarage.com">Dave Hershberger</maintainer>
     <license>BSD</license>
-    <url>http://ros.org/wiki/move_slow_and_clear</url>
+    <url>http://wiki.ros.org/move_slow_and_clear</url>
 
     <buildtool_depend>catkin</buildtool_depend>
 
