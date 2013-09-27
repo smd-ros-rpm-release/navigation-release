@@ -1,0 +1,12 @@
+Source: ros-hydro-amcl
+Section: misc
+Priority: extra
+Maintainer: Dave Hershberger <hersh@willowgarage.com>
+Build-Depends: debhelper (>= 7.0.50~), ros-hydro-catkin, ros-hydro-dynamic-reconfigure, ros-hydro-message-filters, ros-hydro-nav-msgs, ros-hydro-roscpp, ros-hydro-rostest, ros-hydro-std-srvs, ros-hydro-tf
+Homepage: http://wiki.ros.org/amcl
+Standards-Version: 3.9.2
+
+Package: ros-hydro-amcl
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-hydro-dynamic-reconfigure, ros-hydro-roscpp, ros-hydro-tf
+Description: amcl is a probabilistic localization system for a robot moving in 2D. It implements the adaptive (or KLD-sampling) Monte Carlo localization approach (as described by Dieter Fox), which uses a particle filter to track the pose of a robot against a known map. This node is derived, with thanks, from Andrew Howard's excellent 'amcl' Player driver.
