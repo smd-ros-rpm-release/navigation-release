@@ -1,0 +1,9 @@
+ros-hydro-navfn (1.11.4-0precise) precise; urgency=high
+
+  * Package URL Updates
+  * fixed #103 <https://github.com/ros-planning/navigation/issues/103>, navfn_node not installed
+  * Potential missing dependency
+
+ -- Dave Hershberger <hersh@willowgarage.com>  Fri, 27 Sep 2013 05:00:00 -0000
+
+
