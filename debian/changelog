@@ -1,9 +1,0 @@
-ros-hydro-map-server (1.11.4-1quantal) quantal; urgency=high
-
-  * prefix utest target to not collide with other targets
-  * Package URL Updates
-  * unique target names to avoid conflicts (e.g. with map-store)
-
- -- Dave Hershberger <hersh@willowgarage.com>  Fri, 27 Sep 2013 05:00:00 -0000
-
-
