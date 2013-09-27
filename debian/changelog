@@ -1,9 +1,0 @@
-ros-hydro-dwa-local-planner (1.11.4-1precise) precise; urgency=high
-
-  * Package URL Updates
-  * Changed new Odom-Helper::initialize() function to setOdomTopic().
-  * some more corrections for the pointcloud object bug
-
- -- Dave Hershberger <hersh@willowgarage.com>  Fri, 27 Sep 2013 05:00:00 -0000
-
-
