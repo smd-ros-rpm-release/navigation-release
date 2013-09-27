@@ -1,0 +1,9 @@
+ros-hydro-move-base (1.11.4-0raring) raring; urgency=high
+
+  * Package URL Updates
+  * Reintroduce ClearCostmaps Service
+  * Add dependencies to recovery behaviors.
+
+ -- Dave Hershberger <hersh@willowgarage.com>  Fri, 27 Sep 2013 05:00:00 -0000
+
+
