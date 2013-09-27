@@ -1,0 +1,13 @@
+ros-hydro-costmap-2d (1.11.4-0quantal) quantal; urgency=high
+
+  * Improve bounds checking
+  * Reimplement Clear Costmaps Service by implementing reset functions in each layer
+  * Package URL Updates
+  * Additional static layer functionality for receiving updates
+  * Misc. Pointcloud fixes
+  * Improved eigen alignment problem on 32-bit arch.
+  * fixed costmap_2d tests
+
+ -- Dave Hershberger <hersh@willowgarage.com>  Fri, 27 Sep 2013 05:00:00 -0000
+
+
