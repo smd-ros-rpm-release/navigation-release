@@ -20,11 +20,6 @@ void VoxelLayer::onInitialize()
   ObstacleLayer::onInitialize();
   ros::NodeHandle private_nh("~/" + name_);
 
-  dsrv_ = new dynamic_reconfigure::Server<costmap_2d::VoxelPluginConfig>(private_nh);
-  dynamic_reconfigure::Server<costmap_2d::VoxelPluginConfig>::CallbackType cb = boost::bind(
-      &VoxelLayer::reconfigureCB, this, _1, _2);
-  dsrv_->setCallback(cb);
-
   private_nh.param("publish_voxel_map", publish_voxel_, false);
   if (publish_voxel_)
     voxel_pub_ = private_nh.advertise < costmap_2d::VoxelGrid > ("voxel_grid", 1);
@@ -37,6 +32,14 @@ void VoxelLayer::initMaps()
   ObstacleLayer::initMaps();
   voxel_grid_.resize(size_x_, size_y_, size_z_);
   ROS_ASSERT(voxel_grid_.sizeX() == size_x_ && voxel_grid_.sizeY() == size_y_);
+}
+
+void VoxelLayer::setupDynamicReconfigure(ros::NodeHandle& nh)
+{
+  dsrv_ = new dynamic_reconfigure::Server<costmap_2d::VoxelPluginConfig>(nh);
+  dynamic_reconfigure::Server<costmap_2d::VoxelPluginConfig>::CallbackType cb = boost::bind(
+      &VoxelLayer::reconfigureCB, this, _1, _2);
+  dsrv_->setCallback(cb);
 }
 
 void VoxelLayer::reconfigureCB(costmap_2d::VoxelPluginConfig &config, uint32_t level)
@@ -55,6 +58,14 @@ void VoxelLayer::matchSize()
 {
   initMaps();
 
+}
+
+void VoxelLayer::reset()
+{
+  deactivate();
+  ObstacleLayer::initMaps();
+  voxel_grid_.reset();
+  activate();
 }
 
 void VoxelLayer::updateBounds(double origin_x, double origin_y, double origin_yaw, double* min_x,
@@ -100,7 +111,7 @@ void VoxelLayer::updateBounds(double origin_x, double origin_y, double origin_ya
   {
     const Observation& obs = *it;
 
-    const pcl::PointCloud<pcl::PointXYZ>& cloud = obs.cloud_;
+    const pcl::PointCloud<pcl::PointXYZ>& cloud = *(obs.cloud_);
 
     double sq_obstacle_range = obs.obstacle_range_ * obs.obstacle_range_;
 
@@ -224,7 +235,7 @@ void VoxelLayer::clearNonLethal(double wx, double wy, double w_size_x, double w_
 void VoxelLayer::raytraceFreespace(const Observation& clearing_observation, double* min_x, double* min_y,
                                            double* max_x, double* max_y)
 {
-  if (clearing_observation.cloud_.points.size() == 0)
+  if (clearing_observation.cloud_->points.size() == 0)
     return;
 
   double sensor_x, sensor_y, sensor_z;
@@ -245,18 +256,18 @@ void VoxelLayer::raytraceFreespace(const Observation& clearing_observation, doub
   if( publish_clearing_points )
   {
     clearing_endpoints_.points.clear();
-    clearing_endpoints_.points.reserve( clearing_observation.cloud_.points.size() );
+    clearing_endpoints_.points.reserve( clearing_observation.cloud_->points.size() );
   }
 
   //we can pre-compute the enpoints of the map outside of the inner loop... we'll need these later
   double map_end_x = origin_x_ + getSizeInMetersX();
   double map_end_y = origin_y_ + getSizeInMetersY();
 
-  for (unsigned int i = 0; i < clearing_observation.cloud_.points.size(); ++i)
+  for (unsigned int i = 0; i < clearing_observation.cloud_->points.size(); ++i)
   {
-    double wpx = clearing_observation.cloud_.points[i].x;
-    double wpy = clearing_observation.cloud_.points[i].y;
-    double wpz = clearing_observation.cloud_.points[i].z;
+    double wpx = clearing_observation.cloud_->points[i].x;
+    double wpy = clearing_observation.cloud_->points[i].y;
+    double wpz = clearing_observation.cloud_->points[i].z;
 
     double distance = dist(ox, oy, oz, wpx, wpy, wpz);
     double scaling_fact = 1.0;
@@ -317,10 +328,7 @@ void VoxelLayer::raytraceFreespace(const Observation& clearing_observation, doub
                                       unknown_threshold_, mark_threshold_, FREE_SPACE, NO_INFORMATION,
                                       cell_raytrace_range);
 
-      *min_x = std::min(wpx, *min_x);
-      *min_y = std::min(wpy, *min_y);
-      *max_x = std::max(wpx, *max_x);
-      *max_y = std::max(wpy, *max_y);
+      updateRaytraceBounds(ox, oy, wpx, wpy, clearing_observation.raytrace_range_, min_x, min_y, max_x, max_y);
 
       if( publish_clearing_points )
       {
@@ -336,8 +344,8 @@ void VoxelLayer::raytraceFreespace(const Observation& clearing_observation, doub
   if( publish_clearing_points )
   {
     clearing_endpoints_.header.frame_id = global_frame_;
-    clearing_endpoints_.header.stamp = pcl_conversions::fromPCL(clearing_observation.cloud_.header).stamp;
-    clearing_endpoints_.header.seq = clearing_observation.cloud_.header.seq;
+    clearing_endpoints_.header.stamp = pcl_conversions::fromPCL(clearing_observation.cloud_->header).stamp;
+    clearing_endpoints_.header.seq = clearing_observation.cloud_->header.seq;
 
     clearing_endpoints_pub_.publish( clearing_endpoints_ );
   }
