@@ -153,12 +153,16 @@ void ObstacleLayer::onInitialize()
 
   }
 
+  setupDynamicReconfigure(nh);
+  footprint_layer_.initialize( layered_costmap_, name_ + "_footprint", tf_);
+}
+
+void ObstacleLayer::setupDynamicReconfigure(ros::NodeHandle& nh)
+{
   dsrv_ = new dynamic_reconfigure::Server<costmap_2d::ObstaclePluginConfig>(nh);
   dynamic_reconfigure::Server<costmap_2d::ObstaclePluginConfig>::CallbackType cb = boost::bind(
       &ObstacleLayer::reconfigureCB, this, _1, _2);
   dsrv_->setCallback(cb);
-
-  footprint_layer_.initialize( layered_costmap_, name_ + "_footprint", tf_);
 }
 
 void ObstacleLayer::reconfigureCB(costmap_2d::ObstaclePluginConfig &config, uint32_t level)
@@ -273,7 +277,7 @@ void ObstacleLayer::updateBounds(double origin_x, double origin_y, double origin
   {
     const Observation& obs = *it;
 
-    const pcl::PointCloud<pcl::PointXYZ>& cloud = obs.cloud_;
+    const pcl::PointCloud<pcl::PointXYZ>& cloud = *(obs.cloud_);
 
     double sq_obstacle_range = obs.obstacle_range_ * obs.obstacle_range_;
 
@@ -388,7 +392,7 @@ void ObstacleLayer::raytraceFreespace(const Observation& clearing_observation, d
 {
   double ox = clearing_observation.origin_.x;
   double oy = clearing_observation.origin_.y;
-  pcl::PointCloud < pcl::PointXYZ > cloud = clearing_observation.cloud_;
+  pcl::PointCloud < pcl::PointXYZ > cloud = *(clearing_observation.cloud_);
 
   //get the map coordinates of the origin of the sensor
   unsigned int x0, y0;
@@ -457,15 +461,12 @@ void ObstacleLayer::raytraceFreespace(const Observation& clearing_observation, d
     if (!worldToMap(wx, wy, x1, y1))
       continue;
 
-    *min_x = std::min(wx, *min_x);
-    *min_y = std::min(wy, *min_y);
-    *max_x = std::max(wx, *max_x);
-    *max_y = std::max(wy, *max_y);
-
     unsigned int cell_raytrace_range = cellDistance(clearing_observation.raytrace_range_);
     MarkCell marker(costmap_, FREE_SPACE);
     //and finally... we can execute our trace to clear obstacles along that line
     raytraceLine(marker, x0, y0, x1, y1, cell_raytrace_range);
+
+    updateRaytraceBounds(ox, oy, wx, wy, clearing_observation.raytrace_range_, min_x, min_y, max_x, max_y);
   }
 }
 
@@ -491,6 +492,28 @@ void ObstacleLayer::deactivate()
     if (observation_subscribers_[i] != NULL)
       observation_subscribers_[i]->unsubscribe();
   }
+}
+
+void ObstacleLayer::updateRaytraceBounds(double ox, double oy, double wx, double wy, double range, double* min_x, double* min_y,
+					 double* max_x, double* max_y)
+{
+  double dx = wx-ox, dy = wy-oy;
+  double full_distance = sqrt( dx*dx+dy*dy );
+  double scale = std::min(1.0, range / full_distance);
+  double ex = ox + dx * scale, ey = oy + dy * scale;
+  *min_x = std::min(ex, *min_x);
+  *min_y = std::min(ey, *min_y);
+  *max_x = std::max(ex, *max_x);
+  *max_y = std::max(ey, *max_y);
+}
+
+void ObstacleLayer::reset()
+{
+    deactivate();
+    initMaps();
+    current_ = true;
+    has_been_reset_ = false;
+    activate();
 }
 
 void ObstacleLayer::onFootprintChanged()
