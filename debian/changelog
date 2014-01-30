@@ -1,9 +1,0 @@
-ros-hydro-amcl (1.11.4-2quantal) quantal; urgency=high
-
-  * Package URL Updates
-  * amcl_pose and particle cloud are now published latched
-  * Fixed or commented out failing amcl tests.
-
- -- Dave Hershberger <hersh@willowgarage.com>  Fri, 27 Sep 2013 05:00:00 -0000
-
-
