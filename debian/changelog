@@ -1,0 +1,31 @@
+ros-hydro-costmap-2d (1.11.5-0raring) raring; urgency=high
+
+  * Better threading in inflation layer
+  * don't set initialized until updateMap is called
+  * check whether costmap is initalized before publishing
+  * New Overwrite Methods
+    updateMap method
+    Fix for #68 <https://github.com/ros-planning/navigation/issues/68>
+    Fix for inflation memory problems
+    InfIsValid #128 <https://github.com/ros-planning/navigation/issues/128>
+    Static layer can recieve updates and accept non-lethal values
+    Obstacle layer uses track_unknown_space parameter
+    Footprint layer is not longer created as top-level layer (used as part of obstacle layer instead)
+  * Download test data from download.ros.org instead of willow
+  * Change maintainer from Hersh to Lu
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Thu, 30 Jan 2014 06:00:00 -0000
+
+ros-hydro-costmap-2d (1.11.4-0raring) raring; urgency=high
+
+  * Improve bounds checking
+  * Reimplement Clear Costmaps Service by implementing reset functions in each layer
+  * Package URL Updates
+  * Additional static layer functionality for receiving updates
+  * Misc. Pointcloud fixes
+  * Improved eigen alignment problem on 32-bit arch.
+  * fixed costmap_2d tests
+
+ -- Dave Hershberger <hersh@willowgarage.com>  Fri, 27 Sep 2013 05:00:00 -0000
+
+
