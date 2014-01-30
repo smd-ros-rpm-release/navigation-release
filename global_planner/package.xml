@@ -1,6 +1,6 @@
 <package>
   <name>global_planner</name>
-  <version>1.11.4</version>
+  <version>1.11.5</version>
   <description>
      A path planner library and node.
   </description>
@@ -31,5 +31,8 @@
   <run_depend>pluginlib</run_depend>
   <run_depend>roscpp</run_depend>
   <run_depend>tf</run_depend>
+  <export>
+      <nav_core plugin="${prefix}/bgp_plugin.xml" />
+  </export>
 
 </package>
