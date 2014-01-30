@@ -36,6 +36,7 @@
  *         David V. Lu!!
  *********************************************************************/
 #include<global_planner/astar.h>
+#include<costmap_2d/cost_values.h>
 
 namespace global_planner {
 
@@ -43,7 +44,7 @@ AStarExpansion::AStarExpansion(PotentialCalculator* p_calc, int xs, int ys) :
         Expander(p_calc, xs, ys) {
 }
 
-bool AStarExpansion::calculatePotentials(unsigned char* costs, int start_x, int start_y, int end_x, int end_y,
+bool AStarExpansion::calculatePotentials(unsigned char* costs, double start_x, double start_y, double end_x, double end_y,
                                         int cycles, float* potential) {
     queue_.clear();
     int start_i = toIndex(start_x, start_y);
@@ -53,8 +54,9 @@ bool AStarExpansion::calculatePotentials(unsigned char* costs, int start_x, int 
     potential[start_i] = 0;
 
     int goal_i = toIndex(end_x, end_y);
+    int cycle = 0;
 
-    while (queue_.size() > 0) {
+    while (queue_.size() > 0 && cycle < cycles) {
         Index top = queue_[0];
         std::pop_heap(queue_.begin(), queue_.end(), greater1());
         queue_.pop_back();
@@ -75,6 +77,9 @@ bool AStarExpansion::calculatePotentials(unsigned char* costs, int start_x, int 
 void AStarExpansion::add(unsigned char* costs, float* potential, float prev_potential, int next_i, int end_x,
                          int end_y) {
     if (potential[next_i] < POT_HIGH)
+        return;
+
+    if(costs[next_i]>=lethal_cost_ && !(unknown_ && costs[next_i]==costmap_2d::NO_INFORMATION))
         return;
 
     potential[next_i] = p_calc_->calculatePotential(potential, costs[next_i] + neutral_cost_, next_i, prev_potential);

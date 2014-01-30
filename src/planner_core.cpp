@@ -48,11 +48,11 @@
 #include <global_planner/quadratic_calculator.h>
 
 //register this planner as a BaseGlobalPlanner plugin
-PLUGINLIB_DECLARE_CLASS(global_planner, PlannerCore, global_planner::PlannerCore, nav_core::BaseGlobalPlanner)
+PLUGINLIB_EXPORT_CLASS(global_planner::GlobalPlanner, nav_core::BaseGlobalPlanner)
 
 namespace global_planner {
 
-void PlannerCore::outlineMap(unsigned char* costarr, int nx, int ny, unsigned char value) {
+void GlobalPlanner::outlineMap(unsigned char* costarr, int nx, int ny, unsigned char value) {
     unsigned char* pc = costarr;
     for (int i = 0; i < nx; i++)
         *pc++ = value;
@@ -67,24 +67,33 @@ void PlannerCore::outlineMap(unsigned char* costarr, int nx, int ny, unsigned ch
         *pc = value;
 }
 
-PlannerCore::PlannerCore() :
-        costmap_ros_(NULL), initialized_(false), allow_unknown_(true) {
+GlobalPlanner::GlobalPlanner() :
+        costmap_(NULL), initialized_(false), allow_unknown_(true) {
 }
 
-PlannerCore::PlannerCore(std::string name, costmap_2d::Costmap2DROS* costmap_ros) :
-        costmap_ros_(NULL), initialized_(false), allow_unknown_(true) {
+GlobalPlanner::GlobalPlanner(std::string name, costmap_2d::Costmap2D* costmap, std::string frame_id) :
+        costmap_(NULL), initialized_(false), allow_unknown_(true) {
     //initialize the planner
-    initialize(name, costmap_ros);
+    initialize(name, costmap, frame_id);
 }
 
-void PlannerCore::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros) {
+void GlobalPlanner::initialize(std::string name, costmap_2d::Costmap2DROS* costmap_ros) {
+    initialize(name, costmap_ros->getCostmap(), costmap_ros->getGlobalFrameID());
+}
+
+void GlobalPlanner::initialize(std::string name, costmap_2d::Costmap2D* costmap, std::string frame_id) {
     if (!initialized_) {
         ros::NodeHandle private_nh("~/" + name);
-        costmap_ros_ = costmap_ros;
-
-        costmap_2d::Costmap2D* costmap = costmap_ros_->getCostmap();
+        costmap_ = costmap;
+        frame_id_ = frame_id;
 
         unsigned int cx = costmap->getSizeInCellsX(), cy = costmap->getSizeInCellsY();
+
+        private_nh.param("old_navfn_behavior", old_navfn_behavior_, false);
+        if(!old_navfn_behavior_)
+            convert_offset_ = 0.5;
+        else
+            convert_offset_ = 0.0;
 
         bool use_quadratic;
         private_nh.param("use_quadratic", use_quadratic, true);
@@ -96,7 +105,13 @@ void PlannerCore::initialize(std::string name, costmap_2d::Costmap2DROS* costmap
         bool use_dijkstra;
         private_nh.param("use_dijkstra", use_dijkstra, true);
         if (use_dijkstra)
-            planner_ = new DijkstraExpansion(p_calc_, cx, cy);
+        {
+            DijkstraExpansion* de = new DijkstraExpansion(p_calc_, cx, cy);
+            if(!old_navfn_behavior_)
+                de->setPreciseStart(true);
+            planner_ = de;
+            
+        }
         else
             planner_ = new AStarExpansion(p_calc_, cx, cy);
 
@@ -111,9 +126,11 @@ void PlannerCore::initialize(std::string name, costmap_2d::Costmap2DROS* costmap
         potential_pub_ = private_nh.advertise<nav_msgs::OccupancyGrid>("potential", 1);
 
         private_nh.param("allow_unknown", allow_unknown_, true);
+        planner_->setHasUnknown(allow_unknown_);
         private_nh.param("planner_window_x", planner_window_x_, 0.0);
         private_nh.param("planner_window_y", planner_window_y_, 0.0);
         private_nh.param("default_tolerance", default_tolerance_, 0.0);
+        private_nh.param("publish_scale", publish_scale_, 100);
 
         double costmap_pub_freq;
         private_nh.param("planner_costmap_publish_frequency", costmap_pub_freq, 0.0);
@@ -122,11 +139,11 @@ void PlannerCore::initialize(std::string name, costmap_2d::Costmap2DROS* costmap
         ros::NodeHandle prefix_nh;
         tf_prefix_ = tf::getPrefixParam(prefix_nh);
 
-        make_plan_srv_ = private_nh.advertiseService("make_plan", &PlannerCore::makePlanService, this);
+        make_plan_srv_ = private_nh.advertiseService("make_plan", &GlobalPlanner::makePlanService, this);
 
         dsrv_ = new dynamic_reconfigure::Server<global_planner::GlobalPlannerConfig>(ros::NodeHandle("~/" + name));
         dynamic_reconfigure::Server<global_planner::GlobalPlannerConfig>::CallbackType cb = boost::bind(
-                &PlannerCore::reconfigureCB, this, _1, _2);
+                &GlobalPlanner::reconfigureCB, this, _1, _2);
         dsrv_->setCallback(cb);
 
         initialized_ = true;
@@ -135,14 +152,15 @@ void PlannerCore::initialize(std::string name, costmap_2d::Costmap2DROS* costmap
 
 }
 
-void PlannerCore::reconfigureCB(global_planner::GlobalPlannerConfig& config, uint32_t level) {
+void GlobalPlanner::reconfigureCB(global_planner::GlobalPlannerConfig& config, uint32_t level) {
     planner_->setLethalCost(config.lethal_cost);
     path_maker_->setLethalCost(config.lethal_cost);
     planner_->setNeutralCost(config.neutral_cost);
     planner_->setFactor(config.cost_factor);
+    publish_potential_ = config.publish_potential;
 }
 
-void PlannerCore::clearRobotCell(const tf::Stamped<tf::Pose>& global_pose, unsigned int mx, unsigned int my) {
+void GlobalPlanner::clearRobotCell(const tf::Stamped<tf::Pose>& global_pose, unsigned int mx, unsigned int my) {
     if (!initialized_) {
         ROS_ERROR(
                 "This planner has not been initialized yet, but it is being used, please call initialize() before use");
@@ -150,30 +168,45 @@ void PlannerCore::clearRobotCell(const tf::Stamped<tf::Pose>& global_pose, unsig
     }
 
     //set the associated costs in the cost map to be free
-    costmap_ros_->getCostmap()->setCost(mx, my, costmap_2d::FREE_SPACE);
+    costmap_->setCost(mx, my, costmap_2d::FREE_SPACE);
 }
 
-bool PlannerCore::makePlanService(nav_msgs::GetPlan::Request& req, nav_msgs::GetPlan::Response& resp) {
+bool GlobalPlanner::makePlanService(nav_msgs::GetPlan::Request& req, nav_msgs::GetPlan::Response& resp) {
     makePlan(req.start, req.goal, resp.plan.poses);
 
     resp.plan.header.stamp = ros::Time::now();
-    resp.plan.header.frame_id = costmap_ros_->getGlobalFrameID();
+    resp.plan.header.frame_id = frame_id_;
 
     return true;
 }
 
-void PlannerCore::mapToWorld(double mx, double my, double& wx, double& wy) {
-    costmap_2d::Costmap2D* costmap = costmap_ros_->getCostmap();
-    wx = costmap->getOriginX() + mx * costmap->getResolution();
-    wy = costmap->getOriginY() + my * costmap->getResolution();
+void GlobalPlanner::mapToWorld(double mx, double my, double& wx, double& wy) {
+    wx = costmap_->getOriginX() + (mx+convert_offset_) * costmap_->getResolution();
+    wy = costmap_->getOriginY() + (my+convert_offset_) * costmap_->getResolution();
 }
 
-bool PlannerCore::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,
+bool GlobalPlanner::worldToMap(double wx, double wy, double& mx, double& my) {
+    double origin_x = costmap_->getOriginX(), origin_y = costmap_->getOriginY();
+    double resolution = costmap_->getResolution();
+
+    if (wx < origin_x || wy < origin_y)
+        return false;
+
+    mx = (wx - origin_x) / resolution - convert_offset_;
+    my = (wy - origin_y) / resolution - convert_offset_;
+
+    if (mx < costmap_->getSizeInCellsX() && my < costmap_->getSizeInCellsY())
+        return true;
+
+    return false;
+}
+
+bool GlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,
                            std::vector<geometry_msgs::PoseStamped>& plan) {
     return makePlan(start, goal, default_tolerance_, plan);
 }
 
-bool PlannerCore::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,
+bool GlobalPlanner::makePlan(const geometry_msgs::PoseStamped& start, const geometry_msgs::PoseStamped& goal,
                            double tolerance, std::vector<geometry_msgs::PoseStamped>& plan) {
     boost::mutex::scoped_lock lock(mutex_);
     if (!initialized_) {
@@ -186,8 +219,7 @@ bool PlannerCore::makePlan(const geometry_msgs::PoseStamped& start, const geomet
     plan.clear();
 
     ros::NodeHandle n;
-    costmap_2d::Costmap2D* costmap = costmap_ros_->getCostmap();
-    std::string global_frame = costmap_ros_->getGlobalFrameID();
+    std::string global_frame = frame_id_;
 
     //until tf can handle transforming things that are way in the past... we'll require the goal to be in our global frame
     if (tf::resolve(tf_prefix_, goal.header.frame_id) != tf::resolve(tf_prefix_, global_frame)) {
@@ -205,80 +237,62 @@ bool PlannerCore::makePlan(const geometry_msgs::PoseStamped& start, const geomet
     double wx = start.pose.position.x;
     double wy = start.pose.position.y;
 
-    unsigned int start_x, start_y, goal_x, goal_y;
+    unsigned int start_x_i, start_y_i, goal_x_i, goal_y_i;
+    double start_x, start_y, goal_x, goal_y;
 
-    if (!costmap->worldToMap(wx, wy, start_x, start_y)) {
+    if (!costmap_->worldToMap(wx, wy, start_x_i, start_y_i)) {
         ROS_WARN(
                 "The robot's start position is off the global costmap. Planning will always fail, are you sure the robot has been properly localized?");
         return false;
+    }
+    if(old_navfn_behavior_){
+        start_x = start_x_i;
+        start_y = start_y_i;
+    }else{
+        worldToMap(wx, wy, start_x, start_y);
     }
 
     wx = goal.pose.position.x;
     wy = goal.pose.position.y;
 
-    if (!costmap->worldToMap(wx, wy, goal_x, goal_y)) {
+    if (!costmap_->worldToMap(wx, wy, goal_x_i, goal_y_i)) {
         ROS_WARN(
                 "The goal sent to the navfn planner is off the global costmap. Planning will always fail to this goal.");
         return false;
+    }
+    if(old_navfn_behavior_){
+        goal_x = goal_x_i;
+        goal_y = goal_y_i;
+    }else{
+        worldToMap(wx, wy, goal_x, goal_y);
     }
 
     //clear the starting cell within the costmap because we know it can't be an obstacle
     tf::Stamped<tf::Pose> start_pose;
     tf::poseStampedMsgToTF(start, start_pose);
-    clearRobotCell(start_pose, start_x, start_y);
+    clearRobotCell(start_pose, start_x_i, start_y_i);
 
-    int nx = costmap->getSizeInCellsX(), ny = costmap->getSizeInCellsY();
+    int nx = costmap_->getSizeInCellsX(), ny = costmap_->getSizeInCellsY();
+
     //make sure to resize the underlying array that Navfn uses
     p_calc_->setSize(nx, ny);
     planner_->setSize(nx, ny);
     path_maker_->setSize(nx, ny);
     potential_array_ = new float[nx * ny];
 
-    bool found_legal = planner_->calculatePotentials(costmap->getCharMap(), start_x, start_y, goal_x, goal_y,
+    outlineMap(costmap_->getCharMap(), nx, ny, costmap_2d::LETHAL_OBSTACLE);
+
+    bool found_legal = planner_->calculatePotentials(costmap_->getCharMap(), start_x, start_y, goal_x, goal_y,
                                                     nx * ny * 2, potential_array_);
 
-    //**********************888
-    double resolution = costmap->getResolution();
-    nav_msgs::OccupancyGrid grid;
-    // Publish Whole Grid
-    grid.header.frame_id = costmap_ros_->getGlobalFrameID();
-    grid.header.stamp = ros::Time::now();
-    grid.info.resolution = resolution;
-
-    grid.info.width = nx;
-    grid.info.height = ny;
-
-    costmap->mapToWorld(0, 0, wx, wy);
-    grid.info.origin.position.x = wx - resolution / 2;
-    grid.info.origin.position.y = wy - resolution / 2;
-    grid.info.origin.position.z = 0.0;
-    grid.info.origin.orientation.w = 1.0;
-
-    grid.data.resize(nx * ny);
-
-    float max = 0.0;
-    for (unsigned int i = 0; i < grid.data.size(); i++) {
-        float potential = potential_array_[i];
-        if (potential < POT_HIGH) {
-            if (potential > max) {
-                max = potential;
-            }
-        }
-    }
-
-    for (unsigned int i = 0; i < grid.data.size(); i++) {
-        if (potential_array_[i] >= POT_HIGH) {
-            grid.data[i] = 255;
-        } else
-            grid.data[i] = potential_array_[i] * 254 / max;
-    }
-    potential_pub_.publish(grid);
-
-    //************************8888888
+    if(!old_navfn_behavior_)
+        planner_->clearEndpoint(costmap_->getCharMap(), potential_array_, goal_x_i, goal_y_i, 2);
+    if(publish_potential_)
+        publishPotential(potential_array_);
 
     if (found_legal) {
         //extract the plan
-        if (getPlanFromPotential(goal, plan)) {
+        if (getPlanFromPotential(start_x, start_y, goal_x, goal_y, goal, plan)) {
             //make sure the goal we push on has the same timestamp as the rest of the plan
             geometry_msgs::PoseStamped goal_copy = goal;
             goal_copy.header.stamp = ros::Time::now();
@@ -286,16 +300,17 @@ bool PlannerCore::makePlan(const geometry_msgs::PoseStamped& start, const geomet
         } else {
             ROS_ERROR("Failed to get a plan from potential when a legal potential was found. This shouldn't happen.");
         }
+    }else{
+        ROS_ERROR("Failed to get a plan.");
     }
 
     //publish the plan for visualization purposes
-    publishPlan(plan, 0.0, 1.0, 0.0, 0.0);
+    publishPlan(plan);
     delete potential_array_;
     return !plan.empty();
 }
 
-void PlannerCore::publishPlan(const std::vector<geometry_msgs::PoseStamped>& path, double r, double g, double b,
-                              double a) {
+void GlobalPlanner::publishPlan(const std::vector<geometry_msgs::PoseStamped>& path) {
     if (!initialized_) {
         ROS_ERROR(
                 "This planner has not been initialized yet, but it is being used, please call initialize() before use");
@@ -319,7 +334,8 @@ void PlannerCore::publishPlan(const std::vector<geometry_msgs::PoseStamped>& pat
     plan_pub_.publish(gui_path);
 }
 
-bool PlannerCore::getPlanFromPotential(const geometry_msgs::PoseStamped& goal,
+bool GlobalPlanner::getPlanFromPotential(double start_x, double start_y, double goal_x, double goal_y,
+                                      const geometry_msgs::PoseStamped& goal,
                                        std::vector<geometry_msgs::PoseStamped>& plan) {
     if (!initialized_) {
         ROS_ERROR(
@@ -327,34 +343,20 @@ bool PlannerCore::getPlanFromPotential(const geometry_msgs::PoseStamped& goal,
         return false;
     }
 
-    costmap_2d::Costmap2D* costmap = costmap_ros_->getCostmap();
-    std::string global_frame = costmap_ros_->getGlobalFrameID();
+    std::string global_frame = frame_id_;
 
     //clear the plan, just in case
     plan.clear();
 
-    //until tf can handle transforming things that are way in the past... we'll require the goal to be in our global frame
-    if (tf::resolve(tf_prefix_, goal.header.frame_id) != tf::resolve(tf_prefix_, global_frame)) {
-        ROS_ERROR(
-                "The goal pose passed to this planner must be in the %s frame.  It is instead in the %s frame.", tf::resolve(tf_prefix_, global_frame).c_str(), tf::resolve(tf_prefix_, goal.header.frame_id).c_str());
-        return false;
-    }
-
-    unsigned int goal_x, goal_y;
-    if (!costmap->worldToMap(goal.pose.position.x, goal.pose.position.y, goal_x, goal_y)) {
-        ROS_WARN(
-                "The goal sent to the navfn planner is off the global costmap. Planning will always fail to this goal.");
-        return false;
-    }
-
     std::vector<std::pair<float, float> > path;
-    if (!path_maker_->getPath(potential_array_, goal_x, goal_y, path)) {
+
+    if (!path_maker_->getPath(potential_array_, start_x, start_y, goal_x, goal_y, path)) {
         ROS_ERROR("NO PATH!");
         return false;
     }
 
     ros::Time plan_time = ros::Time::now();
-    for (unsigned int i = 0; i < path.size(); i++) {
+    for (int i = path.size() -1; i>=0; i--) {
         std::pair<float, float> point = path[i];
         //convert the plan to world coordinates
         double world_x, world_y;
@@ -372,10 +374,51 @@ bool PlannerCore::getPlanFromPotential(const geometry_msgs::PoseStamped& goal,
         pose.pose.orientation.w = 1.0;
         plan.push_back(pose);
     }
-
-    //publish the plan for visualization purposes
-    publishPlan(plan, 0.0, 1.0, 0.0, 0.0);
+    if(old_navfn_behavior_){
+            plan.push_back(goal);
+    }
     return !plan.empty();
+}
+
+void GlobalPlanner::publishPotential(float* potential)
+{
+    int nx = costmap_->getSizeInCellsX(), ny = costmap_->getSizeInCellsY();
+    double resolution = costmap_->getResolution();
+    nav_msgs::OccupancyGrid grid;
+    // Publish Whole Grid
+    grid.header.frame_id = frame_id_;
+    grid.header.stamp = ros::Time::now();
+    grid.info.resolution = resolution;
+
+    grid.info.width = nx;
+    grid.info.height = ny;
+
+    double wx, wy;
+    costmap_->mapToWorld(0, 0, wx, wy);
+    grid.info.origin.position.x = wx - resolution / 2;
+    grid.info.origin.position.y = wy - resolution / 2;
+    grid.info.origin.position.z = 0.0;
+    grid.info.origin.orientation.w = 1.0;
+
+    grid.data.resize(nx * ny);
+
+    float max = 0.0;
+    for (unsigned int i = 0; i < grid.data.size(); i++) {
+        float potential = potential_array_[i];
+        if (potential < POT_HIGH) {
+            if (potential > max) {
+                max = potential;
+            }
+        }
+    }
+
+    for (unsigned int i = 0; i < grid.data.size(); i++) {
+        if (potential_array_[i] >= POT_HIGH) {
+            grid.data[i] = -1;
+        } else 
+            grid.data[i] = potential_array_[i] * publish_scale_ / max;
+    }
+    potential_pub_.publish(grid);
 }
 
 } //end namespace global_planner
