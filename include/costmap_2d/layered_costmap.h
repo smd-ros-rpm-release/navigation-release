@@ -69,7 +69,7 @@ public:
    * @brief  Update the underlying costmap with new data.
    * If you want to update the map outside of the update loop that runs, you can call this.
    */
-  void updateMap(double origin_x, double origin_y, double origin_yaw);
+  void updateMap(double robot_x, double robot_y, double robot_yaw);
 
   std::string getGlobalFrameID() const
   {
@@ -122,6 +122,11 @@ public:
     *yn = byn_;
   }
 
+  bool isInitialized()
+  {
+      return initialized_;
+  }
+
   /** @brief Updates the stored footprint, updates the circumscribed
    * and inscribed radii, and calls onFootprintChanged() in all
    * layers. */
@@ -158,6 +163,7 @@ private:
 
   std::vector<boost::shared_ptr<Layer> > plugins_;
 
+  bool initialized_;
   bool size_locked_;
   double circumscribed_radius_, inscribed_radius_;
   std::vector<geometry_msgs::Point> footprint_;
