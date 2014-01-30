@@ -57,6 +57,7 @@ add_library (navfn src/navfn.cpp src/navfn_ros.cpp)
 target_link_libraries(navfn
     ${catkin_LIBRARIES}
     )
+add_dependencies(navfn ${PROJECT_NAME}_generate_messages_cpp ${catkin_EXPORTED_TARGETS})
 
 add_executable(navfn_node src/navfn_node.cpp)
 target_link_libraries(navfn_node
@@ -68,7 +69,7 @@ install(TARGETS navfn navfn_node
        RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
        )
 
-install(DIRECTORY include/
+install(DIRECTORY include/navfn/
     DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
@@ -121,4 +122,6 @@ endif (NAVFN_HAVE_FLTK AND NAVFN_HAVE_NETPBM AND NOT APPLE)
 #   message (STATUS "pgm.h not found (optional)")
 # endif (NAVFN_HAVE_NETPBM)
 
-add_subdirectory(test)
+if(CATKIN_ENABLE_TESTING)
+  add_subdirectory(test)
+endif()
