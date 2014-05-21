@@ -1,0 +1,30 @@
+ros-hydro-map-server (1.11.7-0quantal) quantal; urgency=high
+
+  * make rostest in CMakeLists optional
+  * Contributors: Lukas Bulwahn
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 21 May 2014 07:00:00 -0000
+
+ros-hydro-map-server (1.11.5-0quantal) quantal; urgency=high
+
+  * install crop map
+  * removing .py from executable script
+  * Map Server can serve maps with non-lethal values
+  * Added support for YAML-CPP 0.5+.
+    The new yaml-cpp API removes the "node >> outputvar;" operator, and
+    it has a new way of loading documents. There's no version hint in the
+    library's headers, so I'm getting the version number from pkg-config.
+  * check for CATKIN_ENABLE_TESTING
+  * Change maintainer from Hersh to Lu
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Thu, 30 Jan 2014 08:00:00 -0000
+
+ros-hydro-map-server (1.11.4-0quantal) quantal; urgency=high
+
+  * prefix utest target to not collide with other targets
+  * Package URL Updates
+  * unique target names to avoid conflicts (e.g. with map-store)
+
+ -- Dave Hershberger <hersh@willowgarage.com>  Fri, 27 Sep 2013 07:00:00 -0000
+
+
