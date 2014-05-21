@@ -2,6 +2,11 @@
 Changelog for package map_server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.7 (2014-05-21)
+-------------------
+* make rostest in CMakeLists optional
+* Contributors: Lukas Bulwahn
+
 1.11.5 (2014-01-30)
 -------------------
 * install crop map
