@@ -2,6 +2,11 @@
 Changelog for package voxel_grid
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.7 (2014-05-21)
+-------------------
+* uses %u instead of %d for unsigned int
+* Contributors: enriquefernandez
+
 1.11.5 (2014-01-30)
 -------------------
 * Misc. other commits from Groovy Branch
