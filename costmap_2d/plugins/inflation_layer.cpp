@@ -159,6 +159,9 @@ void InflationLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, 
     unsigned int sx = current_cell.src_x_;
     unsigned int sy = current_cell.src_y_;
 
+    //pop once we have our cell info
+    inflation_queue_.pop();
+
     //attempt to put the neighbors of the current cell onto the queue
     if (mx > 0)
       enqueue(master_array, index - 1, mx - 1, my, sx, sy);
@@ -168,9 +171,6 @@ void InflationLayer::updateCosts(costmap_2d::Costmap2D& master_grid, int min_i, 
       enqueue(master_array, index + 1, mx + 1, my, sx, sy);
     if (my < size_y - 1)
       enqueue(master_array, index + size_x, mx, my + 1, sx, sy);
-
-    //remove the current cell from the priority queue
-    inflation_queue_.pop();
   }
 }
 
