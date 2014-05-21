@@ -1,6 +1,6 @@
 <package>
     <name>clear_costmap_recovery</name>
-    <version>1.11.6</version>
+    <version>1.11.7</version>
     <description>
 
         This package provides a recovery behavior for the navigation stack that attempts to clear space by reverting the costmaps used by the navigation stack to the static map outside of a given area.
@@ -14,6 +14,7 @@
 
     <buildtool_depend>catkin</buildtool_depend>
 
+    <build_depend>cmake_modules</build_depend>
     <build_depend>roscpp</build_depend>
     <build_depend>tf</build_depend>
     <build_depend>costmap_2d</build_depend>
