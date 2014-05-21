@@ -2,6 +2,12 @@
 Changelog for package robot_pose_ekf
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.7 (2014-05-21)
+-------------------
+* Even longer Time limit for EKF Test
+* make rostest in CMakeLists optional
+* Contributors: David Lu!!, Lukas Bulwahn
+
 1.11.5 (2014-01-30)
 -------------------
 * check for CATKIN_ENABLE_TESTING
