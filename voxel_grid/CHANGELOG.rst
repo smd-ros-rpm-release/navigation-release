@@ -2,6 +2,9 @@
 Changelog for package voxel_grid
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.8 (2014-05-21)
+-------------------
+
 1.11.7 (2014-05-21)
 -------------------
 * uses %u instead of %d for unsigned int
