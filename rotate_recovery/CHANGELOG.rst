@@ -2,6 +2,9 @@
 Changelog for package rotate_recovery
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.8 (2014-05-21)
+-------------------
+
 1.11.7 (2014-05-21)
 -------------------
 * update build to find eigen using cmake_modules
