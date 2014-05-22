@@ -1,0 +1,32 @@
+ros-indigo-robot-pose-ekf (1.11.8-0saucy) saucy; urgency=high
+
+  * fix build, was broken by #175 <https://github.com/ros-planning/navigation/issues/175>
+  * Contributors: Michael Ferguson
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 21 May 2014 07:00:00 -0000
+
+ros-indigo-robot-pose-ekf (1.11.7-0saucy) saucy; urgency=high
+
+  * Even longer Time limit for EKF Test
+  * make rostest in CMakeLists optional
+  * Contributors: David Lu!!, Lukas Bulwahn
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 21 May 2014 07:00:00 -0000
+
+ros-indigo-robot-pose-ekf (1.11.5-0saucy) saucy; urgency=high
+
+  * check for CATKIN_ENABLE_TESTING
+  * Download test data from download.ros.org instead of willow
+  * Change maintainer from Hersh to Lu
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Thu, 30 Jan 2014 08:00:00 -0000
+
+ros-indigo-robot-pose-ekf (1.11.4-0saucy) saucy; urgency=high
+
+  * Package URL Updates
+  * upgrade depracated download data calls.
+  * use tf_prefix to lookup and send transforms
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Fri, 27 Sep 2013 07:00:00 -0000
+
+
