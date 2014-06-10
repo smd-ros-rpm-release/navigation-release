@@ -1,0 +1,38 @@
+ros-indigo-navfn (1.11.9-0saucy) saucy; urgency=high
+
+  * uses ::hypot(x, y) instead of sqrt(x*x, y*y)
+  * Contributors: Enrique Fernández Perdomo
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Tue, 10 Jun 2014 07:00:00 -0000
+
+ros-indigo-navfn (1.11.8-0saucy) saucy; urgency=high
+
+
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 21 May 2014 07:00:00 -0000
+
+ros-indigo-navfn (1.11.7-0saucy) saucy; urgency=high
+
+  * update build to find eigen using cmake_modules
+  * Contributors: Michael Ferguson
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 21 May 2014 07:00:00 -0000
+
+ros-indigo-navfn (1.11.5-0saucy) saucy; urgency=high
+
+  * navfn: fix parallel build error from missing dep
+  * fixed header installation directory
+  * check for CATKIN_ENABLE_TESTING
+  * Change maintainer from Hersh to Lu
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Thu, 30 Jan 2014 08:00:00 -0000
+
+ros-indigo-navfn (1.11.4-0saucy) saucy; urgency=high
+
+  * Package URL Updates
+  * fixed #103 <https://github.com/ros-planning/navigation/issues/103>, navfn_node not installed
+  * Potential missing dependency
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Fri, 27 Sep 2013 07:00:00 -0000
+
+
