@@ -1,0 +1,12 @@
+Source: ros-indigo-robot-pose-ekf
+Section: misc
+Priority: extra
+Maintainer: David V. Lu!! <davidvlu@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-indigo-bfl, ros-indigo-catkin (>= 0.5.68), ros-indigo-geometry-msgs, ros-indigo-nav-msgs, ros-indigo-rosbag, ros-indigo-roscpp, ros-indigo-rostest, ros-indigo-sensor-msgs, ros-indigo-std-msgs, ros-indigo-tf
+Homepage: http://wiki.ros.org/robot_pose_ekf
+Standards-Version: 3.9.2
+
+Package: ros-indigo-robot-pose-ekf
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-indigo-bfl, ros-indigo-geometry-msgs, ros-indigo-nav-msgs, ros-indigo-roscpp, ros-indigo-rostest, ros-indigo-sensor-msgs, ros-indigo-std-msgs, ros-indigo-tf
+Description: The Robot Pose EKF package is used to estimate the 3D pose of a robot, based on (partial) pose measurements coming from different sources. It uses an extended Kalman filter with a 6D model (3D position and 3D orientation) to combine measurements from wheel odometry, IMU sensor and visual odometry. The basic idea is to offer loosely coupled integration with different sensors, where sensor signals are received as ROS messages.
