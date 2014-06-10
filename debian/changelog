@@ -1,0 +1,34 @@
+ros-hydro-clear-costmap-recovery (1.11.9-0precise) precise; urgency=high
+
+
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Tue, 10 Jun 2014 07:00:00 -0000
+
+ros-hydro-clear-costmap-recovery (1.11.8-0precise) precise; urgency=high
+
+
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 21 May 2014 07:00:00 -0000
+
+ros-hydro-clear-costmap-recovery (1.11.7-0precise) precise; urgency=high
+
+  * update build to find eigen using cmake_modules
+  * Contributors: Michael Ferguson
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 21 May 2014 07:00:00 -0000
+
+ros-hydro-clear-costmap-recovery (1.11.5-0precise) precise; urgency=high
+
+  * Misc. other commits from Groovy Branch
+  * Change maintainer from Hersh to Lu
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Thu, 30 Jan 2014 08:00:00 -0000
+
+ros-hydro-clear-costmap-recovery (1.11.4-0precise) precise; urgency=high
+
+  * Package URL Updates
+  * Fix bounds setting
+
+ -- Dave Hershberger <hersh@willowgarage.com>  Fri, 27 Sep 2013 07:00:00 -0000
+
+
