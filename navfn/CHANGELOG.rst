@@ -2,6 +2,11 @@
 Changelog for package navfn
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.10 (2014-06-25)
+--------------------
+* Remove unnecessary colons
+* Contributors: David Lu!!
+
 1.11.9 (2014-06-10)
 -------------------
 * uses ::hypot(x, y) instead of sqrt(x*x, y*y)
