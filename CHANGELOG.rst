@@ -2,6 +2,12 @@
 Changelog for package clear_costmap_recovery
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.12 (2014-10-01)
+--------------------
+* Clarify debug messages
+* Initial Clearing Costmap parameter change
+* Contributors: David Lu!!, Michael Ferguson
+
 1.11.11 (2014-07-23)
 --------------------
 
