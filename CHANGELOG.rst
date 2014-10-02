@@ -2,6 +2,9 @@
 Changelog for package move_slow_and_clear
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
+1.11.12 (2014-10-01)
+--------------------
+
 1.11.11 (2014-07-23)
 --------------------
 * Use service call, rather than system call, to call dynamic
