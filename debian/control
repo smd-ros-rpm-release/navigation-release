@@ -1,0 +1,12 @@
+Source: ros-indigo-move-base
+Section: misc
+Priority: extra
+Maintainer: David V. Lu!! <davidvlu@gmail.com>
+Build-Depends: debhelper (>= 9.0.0), ros-indigo-actionlib, ros-indigo-base-local-planner, ros-indigo-catkin, ros-indigo-clear-costmap-recovery, ros-indigo-cmake-modules, ros-indigo-costmap-2d, ros-indigo-dynamic-reconfigure, ros-indigo-geometry-msgs, ros-indigo-message-generation, ros-indigo-move-base-msgs, ros-indigo-nav-core, ros-indigo-nav-msgs, ros-indigo-navfn, ros-indigo-pluginlib, ros-indigo-roscpp, ros-indigo-rospy, ros-indigo-rotate-recovery, ros-indigo-std-msgs, ros-indigo-std-srvs, ros-indigo-tf, ros-indigo-visualization-msgs
+Homepage: http://wiki.ros.org/move_base
+Standards-Version: 3.9.2
+
+Package: ros-indigo-move-base
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, ros-indigo-actionlib, ros-indigo-base-local-planner, ros-indigo-clear-costmap-recovery, ros-indigo-costmap-2d, ros-indigo-dynamic-reconfigure, ros-indigo-geometry-msgs, ros-indigo-message-runtime, ros-indigo-move-base-msgs, ros-indigo-nav-core, ros-indigo-nav-msgs, ros-indigo-navfn, ros-indigo-pluginlib, ros-indigo-roscpp, ros-indigo-rospy, ros-indigo-rotate-recovery, ros-indigo-std-msgs, ros-indigo-std-srvs, ros-indigo-tf, ros-indigo-visualization-msgs
+Description: The move_base package provides an implementation of an action (see the actionlib package) that, given a goal in the world, will attempt to reach it with a mobile base. The move_base node links together a global and local planner to accomplish its global navigation task. It supports any global planner adhering to the nav_core::BaseGlobalPlanner interface specified in the nav_core package and any local planner adhering to the nav_core::BaseLocalPlanner interface specified in the nav_core package. The move_base node also maintains two costmaps, one for the global planner, and one for a local planner (see the costmap_2d package) that are used to accomplish navigation tasks.
