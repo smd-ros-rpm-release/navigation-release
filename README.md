@@ -1,3 +1,42 @@
+## navigation (indigo) - 1.11.14-0
+
+The packages in the `navigation` repository were released into the `indigo` distro by running `/usr/bin/bloom-release -t indigo -r indigo navigation` on `Sat, 06 Dec 2014 06:55:19 -0000`
+
+These packages were released:
+- `amcl`
+- `base_local_planner`
+- `carrot_planner`
+- `clear_costmap_recovery`
+- `costmap_2d`
+- `dwa_local_planner`
+- `fake_localization`
+- `global_planner`
+- `map_server`
+- `move_base`
+- `move_base_msgs`
+- `move_slow_and_clear`
+- `nav_core`
+- `navfn`
+- `navigation`
+- `robot_pose_ekf`
+- `rotate_recovery`
+- `voxel_grid`
+
+Version of package(s) in repository `navigation`:
+- upstream repository: https://github.com/ros-planning/navigation.git
+- release repository: https://github.com/ros-gbp/navigation-release.git
+- rosdistro version: `1.11.13-0`
+- old version: `1.11.13-0`
+- new version: `1.11.14-0`
+
+Versions of tools used:
+- bloom version: `0.5.14`
+- catkin_pkg version: `0.2.6`
+- rosdep version: `0.10.32`
+- rosdistro version: `0.3.6`
+- vcstools version: `0.1.35`
+
+
 ## navigation (hydro) - 1.11.14-0
 
 The packages in the `navigation` repository were released into the `hydro` distro by running `/usr/bin/bloom-release -t hydro -r hydro navigation` on `Sat, 06 Dec 2014 06:44:53 -0000`
