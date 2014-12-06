@@ -1,0 +1,65 @@
+ros-indigo-move-base (1.11.14-0trusty) trusty; urgency=high
+
+  * use timer rather than rate for immediate wakeup
+  * adding lock to planner makePlan fail case
+  * Contributors: Michael Ferguson, phil0stine
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Fri, 05 Dec 2014 08:00:00 -0000
+
+ros-indigo-move-base (1.11.13-0trusty) trusty; urgency=high
+
+
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Thu, 02 Oct 2014 07:00:00 -0000
+
+ros-indigo-move-base (1.11.12-0trusty) trusty; urgency=high
+
+
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 01 Oct 2014 07:00:00 -0000
+
+ros-indigo-move-base (1.11.11-0trusty) trusty; urgency=high
+
+  * removes trailing spaces and empty lines
+  * Contributors: Enrique Fernández Perdomo
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 23 Jul 2014 07:00:00 -0000
+
+ros-indigo-move-base (1.11.10-0trusty) trusty; urgency=high
+
+  * Remove unnecessary colons
+  * move_base planService now searches out from desired goal
+  * Contributors: David Lu!!, Kaijen Hsiao
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 25 Jun 2014 07:00:00 -0000
+
+ros-indigo-move-base (1.11.9-0trusty) trusty; urgency=high
+
+  * uses ::hypot(x, y) instead of sqrt(x*x, y*y)
+  * Contributors: Enrique Fernández Perdomo
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Tue, 10 Jun 2014 07:00:00 -0000
+
+ros-indigo-move-base (1.11.8-0trusty) trusty; urgency=high
+
+
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 21 May 2014 07:00:00 -0000
+
+ros-indigo-move-base (1.11.7-0trusty) trusty; urgency=high
+
+  * update build to find eigen using cmake_modules
+  * Fix classloader warnings on exit of move_base
+  * Contributors: Michael Ferguson
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Wed, 21 May 2014 07:00:00 -0000
+
+ros-indigo-move-base (1.11.4-0trusty) trusty; urgency=high
+
+  * Package URL Updates
+  * Reintroduce ClearCostmaps Service
+  * Add dependencies to recovery behaviors.
+
+ -- David V. Lu!! <davidvlu@gmail.com>  Fri, 27 Sep 2013 07:00:00 -0000
+
+
